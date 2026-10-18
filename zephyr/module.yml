@@ -1,0 +1,5 @@
+name: transporter-zmk-module
+build:
+  cmake: .
+  settings:
+    board_root: .

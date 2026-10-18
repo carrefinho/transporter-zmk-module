@@ -1,0 +1,12 @@
+identifier: transporter
+name: Transporter
+type: mcu
+arch: riscv
+toolchain:
+  - cross-compile
+  - zephyr
+ram: 20
+flash: 62
+supported:
+  - gpio
+  - usb_device

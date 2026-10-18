@@ -1,0 +1,8 @@
+board:
+  name: transporter
+  full_name: Transporter
+  vendor: carrefinho
+  socs:
+    - name: ch32x035
+      variants:
+        - name: zmk

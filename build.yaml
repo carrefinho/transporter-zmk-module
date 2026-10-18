@@ -1,0 +1,6 @@
+# WCH boards need `toolchain: riscv64` to get the RISC-V build image in the
+# zmk-wch workflow.
+---
+include:
+  - board: transporter/ch32x035/zmk
+    toolchain: riscv64

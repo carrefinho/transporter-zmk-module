@@ -1,0 +1,66 @@
+/*
+ * Copyright (c) 2026 carrefinho
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
+/dts-v1/;
+
+#include <wch/ch32x0/ch32x035g8r6.dtsi>
+#include <zephyr/dt-bindings/gpio/gpio.h>
+
+/ {
+	model = "transporter";
+	compatible = "wch,ch32x035";
+
+	chosen {
+		zephyr,sram = &sram0;
+		zephyr,flash = &flash0;
+	};
+
+	leds {
+		compatible = "gpio-leds";
+
+		led0: led_0 {
+			/* PB11 -> R4 1k -> green LED anode, cathode to GND. */
+			gpios = <&gpiob 11 GPIO_ACTIVE_HIGH>;
+			label = "Green LED";
+		};
+	};
+
+	aliases {
+		led0 = &led0;
+	};
+};
+
+&clk_hsi {
+	status = "okay";
+};
+
+&rcc {
+	clocks = <&clk_hsi>;
+};
+
+&gpioa {
+	status = "okay";
+};
+
+&gpiob {
+	status = "okay";
+};
+
+&gpioc {
+	status = "okay";
+};
+
+/* Bus powered with VDD on 5 V and no regulator, so the PHY runs in 5 V mode. */
+&usbfs {
+	status = "okay";
+	wch,vdd-5v;
+};
+
+zephyr_udc0: &usbfs {};
+
+&exti {
+	status = "okay";
+};

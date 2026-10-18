@@ -1,0 +1,153 @@
+/*
+ * Copyright (c) 2026 carrefinho
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
+#include "transporter.dts"
+#include <dt-bindings/zmk/matrix_transform.h>
+#include <physical_layouts.dtsi>
+
+/*
+ * The diodes are physically col2row, but all rows are on PB, which has no
+ * pull-down. The WCH GPIO driver accepts GPIO_PULL_DOWN there and silently
+ * does nothing, leaving the rows floating. So the scan runs row2col: columns
+ * are pulled-up inputs and rows are driven low as strobes. The diodes are
+ * still forward-biased, and the transform stays in physical (row, col) terms.
+ */
+
+/ {
+	chosen {
+		zmk,kscan = &kscan0;
+		zmk,physical-layout = &layout_transporter;
+	};
+
+	kscan0: kscan_0 {
+		compatible = "zmk,kscan-gpio-matrix";
+		diode-direction = "row2col";
+
+		/* Physical columns -- INPUTS, pulled up. */
+		col-gpios
+			= <&gpioa 1  (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>   /* COL0  */
+			, <&gpioa 0  (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>   /* COL1  */
+			, <&gpioa 2  (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>   /* COL2  */
+			, <&gpioa 3  (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>   /* COL3  */
+			, <&gpioa 6  (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>   /* COL4  */
+			, <&gpiob 0  (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>   /* COL5  */
+			, <&gpioa 4  (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>   /* COL6  */
+			, <&gpioa 5  (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>   /* COL7  */
+			, <&gpioa 7  (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>   /* COL8  */
+			, <&gpiob 3  (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>   /* COL9  */
+			, <&gpiob 4  (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>   /* COL10 */
+			, <&gpiob 6  (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>   /* COL11 */
+			;
+
+		/* Physical rows -- STROBES, driven low when selected. */
+		row-gpios
+			= <&gpiob 8  GPIO_ACTIVE_LOW>   /* ROW0 */
+			, <&gpiob 9  GPIO_ACTIVE_LOW>   /* ROW1 */
+			, <&gpiob 10 GPIO_ACTIVE_LOW>   /* ROW2 */
+			, <&gpiob 7  GPIO_ACTIVE_LOW>   /* ROW3 */
+			, <&gpiob 12 GPIO_ACTIVE_LOW>   /* ROW4 */
+			;
+	};
+
+	transform_transporter: keymap_transform_0 {
+		compatible = "zmk,matrix-transform";
+		columns = <12>;
+		rows = <5>;
+		map = <
+			RC(0,0) RC(0,1) RC(0,2) RC(0,3) RC(0,4) RC(0,5)
+			RC(1,0) RC(1,1) RC(1,2) RC(1,3) RC(1,4) RC(1,5) RC(1,6) RC(1,7) RC(1,8) RC(1,9) RC(1,10) RC(1,11)
+			RC(2,0) RC(2,1) RC(2,2) RC(2,3) RC(2,4) RC(2,5) RC(2,6) RC(2,7) RC(2,8) RC(2,9) RC(2,10) RC(2,11)
+			RC(3,0) RC(3,1) RC(3,2) RC(3,3) RC(3,4) RC(3,5) RC(3,6) RC(3,7) RC(3,8) RC(3,9) RC(3,10) RC(3,11)
+			RC(4,0) RC(4,1) RC(4,2) RC(4,3) RC(4,4) RC(4,5) RC(4,9) RC(4,10) RC(4,11)
+		>;
+	};
+
+	/* 1U = 100. The thumb keys sit 0.25U below the outer bottom row. */
+	layout_transporter: layout_transporter {
+		compatible = "zmk,physical-layout";
+		display-name = "Transporter";
+		transform = <&transform_transporter>;
+
+		keys  //                       w   h    x    y  rot rx ry
+			= <&key_physical_attrs 100 100   50    0 0 0 0>   /* SW1 R0C0 */
+			, <&key_physical_attrs 100 100  150    0 0 0 0>   /* SW2 R0C1 */
+			, <&key_physical_attrs 100 100  250    0 0 0 0>   /* SW3 R0C2 */
+			, <&key_physical_attrs 100 100  350    0 0 0 0>   /* SW4 R0C3 */
+			, <&key_physical_attrs 100 100  450    0 0 0 0>   /* SW5 R0C4 */
+			, <&key_physical_attrs 100 100  550    0 0 0 0>   /* SW6 R0C5 */
+			, <&key_physical_attrs 100 100    0  100 0 0 0>   /* SW7 R1C0 */
+			, <&key_physical_attrs 100 100  100  100 0 0 0>   /* SW8 R1C1 */
+			, <&key_physical_attrs 100 100  200  100 0 0 0>   /* SW9 R1C2 */
+			, <&key_physical_attrs 100 100  300  100 0 0 0>   /* SW10 R1C3 */
+			, <&key_physical_attrs 100 100  400  100 0 0 0>   /* SW11 R1C4 */
+			, <&key_physical_attrs 100 100  500  100 0 0 0>   /* SW12 R1C5 */
+			, <&key_physical_attrs 100 100  600  100 0 0 0>   /* SW13 R1C6 */
+			, <&key_physical_attrs 100 100  700  100 0 0 0>   /* SW14 R1C7 */
+			, <&key_physical_attrs 100 100  800  100 0 0 0>   /* SW15 R1C8 */
+			, <&key_physical_attrs 100 100  900  100 0 0 0>   /* SW16 R1C9 */
+			, <&key_physical_attrs 100 100 1000  100 0 0 0>   /* SW17 R1C10 */
+			, <&key_physical_attrs 175 100 1100  100 0 0 0>   /* SW18 R1C11 */
+			, <&key_physical_attrs 125 100    0  200 0 0 0>   /* SW19 R2C0 */
+			, <&key_physical_attrs 100 100  125  200 0 0 0>   /* SW20 R2C1 */
+			, <&key_physical_attrs 100 100  225  200 0 0 0>   /* SW21 R2C2 */
+			, <&key_physical_attrs 100 100  325  200 0 0 0>   /* SW22 R2C3 */
+			, <&key_physical_attrs 100 100  425  200 0 0 0>   /* SW23 R2C4 */
+			, <&key_physical_attrs 100 100  525  200 0 0 0>   /* SW24 R2C5 */
+			, <&key_physical_attrs 100 100  625  200 0 0 0>   /* SW25 R2C6 */
+			, <&key_physical_attrs 100 100  725  200 0 0 0>   /* SW26 R2C7 */
+			, <&key_physical_attrs 100 100  825  200 0 0 0>   /* SW27 R2C8 */
+			, <&key_physical_attrs 100 100  925  200 0 0 0>   /* SW28 R2C9 */
+			, <&key_physical_attrs 100 100 1025  200 0 0 0>   /* SW29 R2C10 */
+			, <&key_physical_attrs 150 100 1125  200 0 0 0>   /* SW30 R2C11 */
+			, <&key_physical_attrs 175 100    0  300 0 0 0>   /* SW31 R3C0 */
+			, <&key_physical_attrs 100 100  175  300 0 0 0>   /* SW32 R3C1 */
+			, <&key_physical_attrs 100 100  275  300 0 0 0>   /* SW33 R3C2 */
+			, <&key_physical_attrs 100 100  375  300 0 0 0>   /* SW34 R3C3 */
+			, <&key_physical_attrs 100 100  475  300 0 0 0>   /* SW35 R3C4 */
+			, <&key_physical_attrs 100 100  575  300 0 0 0>   /* SW36 R3C5 */
+			, <&key_physical_attrs 100 100  675  300 0 0 0>   /* SW37 R3C6 */
+			, <&key_physical_attrs 100 100  775  300 0 0 0>   /* SW38 R3C7 */
+			, <&key_physical_attrs 100 100  875  300 0 0 0>   /* SW39 R3C8 */
+			, <&key_physical_attrs 100 100  975  300 0 0 0>   /* SW40 R3C9 */
+			, <&key_physical_attrs 100 100 1075  300 0 0 0>   /* SW41 R3C10 */
+			, <&key_physical_attrs 100 100 1175  300 0 0 0>   /* SW42 R3C11 */
+			, <&key_physical_attrs 125 100    0  400 0 0 0>   /* SW43 R4C0 */
+			, <&key_physical_attrs 100 100  125  400 0 0 0>   /* SW44 R4C1 */
+			, <&key_physical_attrs 150 100  250  425 0 0 0>   /* SW48 R4C2 */
+			, <&key_physical_attrs 200 100  400  425 0 0 0>   /* SW49 R4C3 */
+			, <&key_physical_attrs 200 100  600  425 0 0 0>   /* SW50 R4C4 */
+			, <&key_physical_attrs 150 100  800  425 0 0 0>   /* SW51 R4C5 */
+			, <&key_physical_attrs 100 100  975  400 0 0 0>   /* SW45 R4C9 */
+			, <&key_physical_attrs 100 100 1075  400 0 0 0>   /* SW46 R4C10 */
+			, <&key_physical_attrs 100 100 1175  400 0 0 0>   /* SW47 R4C11 */
+			;
+	};
+};
+
+/* 60 K code + 2 K NVS (default 8 sectors x 256 B pages). */
+&flash0 {
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		code_partition: partition@0 {
+			label = "code";
+			reg = <0x00000000 0x0000f000>;
+		};
+
+		storage_partition: partition@f000 {
+			label = "storage";
+			reg = <0x0000f000 0x00000800>;
+		};
+	};
+};
+
+/ {
+	chosen {
+		zephyr,code-partition = &code_partition;
+	};
+};

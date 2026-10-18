@@ -1,0 +1,79 @@
+# Copyright (c) 2026 carrefinho
+# SPDX-License-Identifier: MIT
+
+CONFIG_SYS_CLOCK_HW_CYCLES_PER_SEC=48000000
+
+CONFIG_GPIO=y
+CONFIG_PINCTRL=y
+CONFIG_CLOCK_CONTROL=y
+
+CONFIG_ZMK_USB=y
+CONFIG_ZMK_STUDIO=y
+
+CONFIG_ZMK_HID_INDICATORS=y
+
+# Interrupts can't cover all 12 inputs: PA0/PB0, PA3/PB3, PA4/PB4 and
+# PA6/PB6 share EXTI lines.
+CONFIG_ZMK_KSCAN_MATRIX_POLLING=y
+
+# 100 Hz would round debounce up to 10 ms steps and pull in libgcc __udivdi3
+# for the ms->tick conversion (~1160 B).
+CONFIG_SYS_CLOCK_TICKS_PER_SEC=1000
+
+CONFIG_USE_DT_CODE_PARTITION=y
+
+# --- Studio persistence -------------------------------------------------
+# Without a backend, CONFIG_SETTINGS=y is set but nothing is ever saved.
+CONFIG_FLASH=y
+CONFIG_FLASH_MAP=y
+CONFIG_NVS=y
+CONFIG_SETTINGS_NVS=y
+
+# --- stacks (measured on hardware under load) ---------------------------
+# Idle peaks at 160 B because RISC-V exception frames land on the interrupted
+# thread's stack, so the default 128 can panic. Workqueue covers the keypress
+# path, studio_rpc peaks at 1968 B on get-keymap, ISR peaked at 256 B.
+CONFIG_IDLE_STACK_SIZE=512
+CONFIG_SYSTEM_WORKQUEUE_STACK_SIZE=2560
+CONFIG_ZMK_STUDIO_RPC_THREAD_STACK_SIZE=2304
+CONFIG_ISR_STACK_SIZE=512
+CONFIG_USB_WORKQUEUE_STACK_SIZE=512
+
+# X035 has 20 KB SRAM; the stock buffer sizes assume far more.
+CONFIG_LOG_BUFFER_SIZE=1024
+CONFIG_USB_CDC_ACM_RINGBUF_SIZE=256
+
+# --- RAM trims ----------------------------------------------------------
+CONFIG_ZMK_BEHAVIOR_LOCAL_ID_TYPE_CRC16=y
+CONFIG_ZMK_KEYMAP_LAYER_NAME_MAX_LEN=10
+CONFIG_ZMK_BEHAVIORS_QUEUE_SIZE=16
+CONFIG_ZMK_BEHAVIOR_HOLD_TAP_MAX_HELD=4
+CONFIG_ZMK_BEHAVIOR_HOLD_TAP_MAX_CAPTURED_EVENTS=15
+
+# --- flash cuts ---------------------------------------------------------
+CONFIG_COMPILER_OPT="-msave-restore"
+CONFIG_ZMK_EXT_POWER=n
+CONFIG_ZMK_STUDIO_LOCKING=n
+CONFIG_PRINTK=n
+CONFIG_BOOT_BANNER=n
+CONFIG_EARLY_CONSOLE=n
+
+# -304 B. Nothing can print a stack trace with PRINTK=n anyway.
+CONFIG_EXCEPTION_STACK_TRACE=n
+
+# -704 B. No malloc and no kernel heap in this image. Drops sys_heap, the
+# free-list code and libgcc's __clzsi2 + the 256 B __clz_tab.
+CONFIG_KERNEL_MEM_POOL=n
+CONFIG_COMMON_LIBC_MALLOC=n
+
+# -192 B. PRINTK=n already made the console a no-op.
+CONFIG_CONSOLE=n
+CONFIG_UART_CONSOLE=n
+
+# -152 B. Only BLE and split register dynamic settings handlers.
+CONFIG_SETTINGS_DYNAMIC_HANDLERS=n
+
+# -84 B. Consumer usages up to 0xFF instead of 0xFFF. Covers C_VOL_*, C_PREV/
+# C_NEXT, C_PP etc.; loses the 0x100+ application-launch usages.
+CONFIG_ZMK_HID_CONSUMER_REPORT_USAGES_FULL=n
+CONFIG_ZMK_HID_CONSUMER_REPORT_USAGES_BASIC=y

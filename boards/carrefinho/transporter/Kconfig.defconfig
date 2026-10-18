@@ -1,0 +1,9 @@
+# Copyright (c) 2026 carrefinho
+# SPDX-License-Identifier: MIT
+
+if BOARD_TRANSPORTER_CH32X035_ZMK
+
+config ZMK_KEYBOARD_NAME
+	default "Transporter"
+
+endif # BOARD_TRANSPORTER_CH32X035_ZMK
