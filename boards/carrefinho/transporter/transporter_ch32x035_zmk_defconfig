@@ -8,6 +8,9 @@ CONFIG_PINCTRL=y
 CONFIG_CLOCK_CONTROL=y
 
 CONFIG_ZMK_USB=y
+# Bus powered at 5 V. The legacy usb_dc_wch driver reads this, not the DT
+# wch,vdd-5v property. Untested on hardware.
+CONFIG_USB_DC_WCH_VDD_5V=y
 CONFIG_ZMK_STUDIO=y
 
 CONFIG_ZMK_HID_INDICATORS=y
