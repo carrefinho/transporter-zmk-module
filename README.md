@@ -1,6 +1,6 @@
 # Transporter ZMK Module
 
-This is the ZMK module for the Transporter, a 51-key row-staggered keyboard with an on-board CH32X035 (USB-C, wired only).
+This is the ZMK module for [Transporter](https://github.com/carrefinho/transporter), a low-profile V4N4G0N type keyboard with exploded bars, built around the $0.5 WCH CH32X035 MCU.
 
 It needs [zmk-wch](https://github.com/carrefinho/zmk-wch) for the CH32X035 support, and builds on ZMK's Zephyr 4.1 version.
 
@@ -53,6 +53,12 @@ jobs:
     uses: carrefinho/zmk-wch/.github/workflows/build-user-config.yml@main
 ```
 
+> [!IMPORTANT]
+>
+> This board won't build in a stock `zmk-config`. ZMK's `build-user-config.yml` only has the Arm toolchain, so a RISC-V board fails. Switch to the zmk-wch workflow above, which picks the toolchain per `build.yaml` entry.
+>
+> Entries without `toolchain` still build for Arm, so you can mix Arm and RISC-V (WCH) boards in one repo.
+
 The default keymap is in [`boards/carrefinho/transporter/transporter.keymap`](boards/carrefinho/transporter/transporter.keymap). Copy it to `config/transporter.keymap` in your `zmk-config` to customize it.
 
 # Flashing
@@ -62,5 +68,3 @@ The firmware is a `.bin` file. Hold Raise and press right Shift to enter the WCH
 ```sh
 wchisp flash transporter_ch32x035_zmk-zmk.bin
 ```
-
-The LED shows Caps Lock. Esc is Escape on tap and Caps Lock on hold.
